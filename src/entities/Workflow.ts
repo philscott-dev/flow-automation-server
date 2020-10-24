@@ -34,15 +34,15 @@ export default class WorkFlow extends BaseEntity {
   @Column()
   endId?: string
 
-  @Field(() => [Node], { description: 'List of Nodes in the workflow' })
+  @Field(() => [Node], { description: 'List of Nodes in the workflow.' })
   @OneToMany(() => Node, (node) => node.id, { lazy: true })
   nodes!: Lazy<Node[]>
 
-  @Field({ description: 'Date the workflow was created' })
+  @Field({ description: 'Date the workflow was created.' })
   @CreateDateColumn()
   createdDate!: Date
 
-  @Field({ description: 'Date the workflow was last updated' })
+  @Field({ description: 'Date the workflow was last updated.' })
   @UpdateDateColumn()
   updatedDate!: Date
 }

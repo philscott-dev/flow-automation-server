@@ -1,5 +1,5 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
-import { Node, Workflow } from './entities'
+import { Node, Workflow } from '../entities'
 
 // const sqliteOptions: SqliteConnectionOptions = {
 //   type: 'sqlite',

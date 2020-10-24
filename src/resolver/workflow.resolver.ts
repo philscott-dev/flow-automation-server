@@ -1,4 +1,12 @@
-import { Resolver, Query, Arg, Mutation } from 'type-graphql'
+import { PubSubEngine } from 'graphql-subscriptions'
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  PubSub,
+  Subscription,
+} from 'type-graphql'
 import { Repository } from 'typeorm'
 import { InjectRepository } from 'typeorm-typedi-extensions'
 import { Workflow } from '../entities'
@@ -27,5 +35,22 @@ export default class WorkflowResolver {
   @Query(() => [Workflow])
   workflows(): Promise<Workflow[]> {
     return this.workflowRepo.find()
+  }
+
+  /**
+   * Testing Subscriptions
+   */
+
+  @Mutation(() => Boolean)
+  async pubSubMutation(@PubSub() pubSub: PubSubEngine): Promise<boolean> {
+    await pubSub.publish('NOTIFICATIONS', { message: 'connected' })
+    return true
+  }
+
+  @Subscription(() => Boolean, {
+    topics: 'JOB_COMPLETE',
+  })
+  workflowJobComplete() {
+    return true
   }
 }
