@@ -19,6 +19,7 @@
   "homepage": "https://github.com/philscott-dev/flow-automation-server#readme",
   "dependencies": {
     "apollo-server": "^2.18.2",
+    "bullmq": "^1.10.0",
     "class-validator": "^0.12.2",
     "graphql-redis-subscriptions": "^2.3.1",
     "graphql-subscriptions": "^1.1.0",

@@ -5,15 +5,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
+  ManyToOne,
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
+import { Lazy } from '../helpers/lazy'
+import Workflow from './Workflow'
 
 @Entity()
 @ObjectType()
 export default class Node extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  id!: string
+  readonly id!: string
 
   @Field()
   @Column()
@@ -30,4 +33,7 @@ export default class Node extends BaseEntity {
   @Field()
   @UpdateDateColumn()
   updatedDate!: Date
+
+  @ManyToOne(() => Workflow, { lazy: true })
+  workflow!: Lazy<Workflow>
 }

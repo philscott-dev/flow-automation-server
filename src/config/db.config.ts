@@ -9,7 +9,7 @@ import { Node, Workflow } from '../entities'
 //   entities: [ScreenshotEntity],
 // }
 
-const options: PostgresConnectionOptions = {
+const dbOptions: PostgresConnectionOptions = {
   type: 'postgres',
   database: 'flow-automation',
   synchronize: true,
@@ -17,4 +17,4 @@ const options: PostgresConnectionOptions = {
   entities: [Node, Workflow],
 }
 
-export default options
+export default dbOptions

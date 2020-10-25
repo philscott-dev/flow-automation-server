@@ -16,7 +16,7 @@ import Node from './Node'
 export default class WorkFlow extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  id!: string
+  readonly id!: string
 
   @Field({ description: 'The title of the workflow.' })
   @Column({ nullable: false })
@@ -26,17 +26,26 @@ export default class WorkFlow extends BaseEntity {
   @Column({ nullable: false })
   description!: string
 
-  @Field({ description: 'Node ID that the workflow starts on.' })
-  @Column()
+  @Field({
+    nullable: true,
+    description: 'Node ID that the workflow starts on.',
+  })
+  @Column({ nullable: true })
   startId?: string
 
-  @Field({ description: 'Node ID that the workflow terminates on.' })
-  @Column()
+  @Field({
+    nullable: true,
+    description: 'Node ID that the workflow terminates on.',
+  })
+  @Column({ nullable: true })
   endId?: string
 
   @Field(() => [Node], { description: 'List of Nodes in the workflow.' })
-  @OneToMany(() => Node, (node) => node.id, { lazy: true })
-  nodes!: Lazy<Node[]>
+  @OneToMany(() => Node, (node) => node.workflow, {
+    lazy: true,
+    cascade: ['insert'],
+  })
+  nodes?: Lazy<Node[]>
 
   @Field({ description: 'Date the workflow was created.' })
   @CreateDateColumn()

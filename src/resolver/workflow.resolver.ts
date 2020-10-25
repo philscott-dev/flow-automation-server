@@ -28,7 +28,7 @@ export default class WorkflowResolver {
   }
 
   @Query(() => Workflow)
-  workflow(@Arg('id') id: string) {
+  async workflow(@Arg('id') id: string): Promise<Workflow | undefined> {
     return this.workflowRepo.findOne(id)
   }
 

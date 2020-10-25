@@ -5,19 +5,27 @@ import * as TypeORM from 'typeorm'
 import { Container } from 'typedi'
 import { ApolloServer } from 'apollo-server'
 import { buildSchema } from 'type-graphql'
-import { pubSub } from './config/redis.config'
+import { RedisPubSub } from 'graphql-redis-subscriptions'
+import { redisOptions } from './config/redis.config'
 import { WorkflowResolver } from './resolver'
 import typeOrmOptions from './config/db.config'
+import Redis from 'ioredis'
 
 TypeORM.useContainer(Container)
 
 async function main() {
   await TypeORM.createConnection(typeOrmOptions)
+
   const schema = await buildSchema({
     resolvers: [WorkflowResolver],
+    globalMiddlewares: [],
     container: Container,
-    pubSub,
+    pubSub: new RedisPubSub({
+      publisher: new Redis(redisOptions),
+      subscriber: new Redis(redisOptions),
+    }),
   })
+
   const server = new ApolloServer({
     schema,
     context: () => {},
