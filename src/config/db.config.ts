@@ -1,5 +1,5 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions'
-import { Node, Workflow } from '../entities'
+import { WorkflowNode, Workflow } from '../entities'
 
 // const sqliteOptions: SqliteConnectionOptions = {
 //   type: 'sqlite',
@@ -14,7 +14,7 @@ const dbOptions: PostgresConnectionOptions = {
   database: 'flow-automation',
   synchronize: true,
   logging: false,
-  entities: [Node, Workflow],
+  entities: [WorkflowNode, Workflow],
 }
 
 export default dbOptions

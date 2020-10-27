@@ -1,2 +1,2 @@
 export { default as Workflow } from './Workflow'
-export { default as Node } from './Node'
+export { default as WorkflowNode } from './WorkflowNode'

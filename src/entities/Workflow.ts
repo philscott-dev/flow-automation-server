@@ -8,15 +8,14 @@ import {
   OneToMany,
 } from 'typeorm'
 import { ObjectType, Field, ID } from 'type-graphql'
-import { Lazy } from '../helpers/lazy'
-import Node from './Node'
+import WorkflowNode from './WorkflowNode'
 
-@Entity()
+@Entity('workflow')
 @ObjectType()
 export default class WorkFlow extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  readonly id!: string
+  readonly id!: number
 
   @Field({ description: 'The title of the workflow.' })
   @Column({ nullable: false })
@@ -40,13 +39,6 @@ export default class WorkFlow extends BaseEntity {
   @Column({ nullable: true })
   endId?: string
 
-  @Field(() => [Node], { description: 'List of Nodes in the workflow.' })
-  @OneToMany(() => Node, (node) => node.workflow, {
-    lazy: true,
-    cascade: ['insert'],
-  })
-  nodes?: Lazy<Node[]>
-
   @Field({ description: 'Date the workflow was created.' })
   @CreateDateColumn()
   createdDate!: Date
@@ -54,4 +46,17 @@ export default class WorkFlow extends BaseEntity {
   @Field({ description: 'Date the workflow was last updated.' })
   @UpdateDateColumn()
   updatedDate!: Date
+
+  /**
+   * Relationships
+   */
+
+  @Field(() => [WorkflowNode], {
+    description: 'List of  Workflow Nodes in the workflow.',
+    nullable: false,
+  })
+  @OneToMany(() => WorkflowNode, (workflowNode) => workflowNode.workflow, {
+    cascade: true,
+  })
+  workflowNodes!: WorkflowNode[]
 }
