@@ -106,7 +106,6 @@ export default class WorkflowResolver {
     const { workflowNodes } = workflow
     let index = undefined
     const node = workflowNodes.find((node, i) => {
-      console.log(typeof node.id, typeof id)
       index = i
       // TODO: bug fix needed. one of these is a number for some reason
       return String(node.id) === String(id)
@@ -141,8 +140,14 @@ export default class WorkflowResolver {
   // Delete Workflow Node
   @Mutation(() => WorkflowNode)
   @UseMiddleware(ErrorInterceptor)
-  async deleteWorkflowNode(@Arg('id') id: number): Promise<DeleteResult> {
-    return this.workflowNodeRepo.delete(id)
+  async deleteWorkflowNode(@Arg('id') id: number): Promise<WorkflowNode> {
+    const node = await this.workflowNodeRepo.findOne(id)
+
+    if (!node) {
+      throw new Error('invalid Node ID')
+    }
+    await this.workflowNodeRepo.delete(id)
+    return node
   }
 
   /**
