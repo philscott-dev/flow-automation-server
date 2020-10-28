@@ -1,1 +1,1 @@
-export { default as WorkflowResolver } from './workflow.resolver'
+export { default as WorkflowResolver } from './WorkflowResolver'

@@ -1,5 +1,5 @@
 import { PubSubEngine } from 'graphql-subscriptions'
-import { Repository } from 'typeorm'
+import { DeleteResult, Repository } from 'typeorm'
 import { InjectRepository } from 'typeorm-typedi-extensions'
 import { WorkflowNode, Workflow } from '../entities'
 import { WorkflowInput, WorkflowNodeInput } from '../input'
@@ -13,6 +13,7 @@ import {
   Subscription,
   UseMiddleware,
 } from 'type-graphql'
+import WorkflowNodePositionInput from '../input/WorkflowNodePositionInput'
 
 @Resolver(Workflow)
 export default class WorkflowResolver {
@@ -83,17 +84,17 @@ export default class WorkflowResolver {
       workflow.workflowNodes = [newNode]
     }
 
-    console.log(workflow)
     await this.workflowRepo.save(workflow)
     return newNode
   }
 
   @Mutation(() => WorkflowNode)
   @UseMiddleware(ErrorInterceptor)
-  async updateWorkflowNode(
-    @Arg('input') workflowNodeInput: WorkflowNodeInput,
+  async updateWorkflowNodePosition(
+    @Arg('input') workflowNodePositionInput: WorkflowNodePositionInput,
   ): Promise<WorkflowNode> {
-    const { workflowId, ...node } = workflowNodeInput
+    const { workflowId, id, x, y } = workflowNodePositionInput
+
     const workflow = await this.workflowRepo.findOne(workflowId, {
       relations: ['workflowNodes'],
     })
@@ -102,15 +103,50 @@ export default class WorkflowResolver {
       throw new Error('invalid workflow ID')
     }
 
-    const newNode = this.workflowNodeRepo.create({ ...node, workflow })
-    workflow.workflowNodes?.push(newNode)
+    const { workflowNodes } = workflow
+    let index = undefined
+    const node = workflowNodes.find((node, i) => {
+      console.log(typeof node.id, typeof id)
+      index = i
+      // TODO: bug fix needed. one of these is a number for some reason
+      return String(node.id) === String(id)
+    })
 
-    await this.workflowRepo.save(newNode)
-    return newNode
+    console.log(index, node)
+
+    if (!node || index == undefined) {
+      throw new Error('invalid Node ID')
+    }
+
+    node.x = x
+    node.y = y
+
+    workflow.workflowNodes = [
+      ...workflowNodes.slice(0, index),
+      node,
+      ...workflowNodes.slice(index + 1),
+    ]
+
+    await this.workflowRepo.save(workflow)
+    return node
+  }
+
+  // Delete Workflow
+  @Mutation(() => Workflow)
+  @UseMiddleware(ErrorInterceptor)
+  async deleteWorkflow(@Arg('id') id: number): Promise<DeleteResult> {
+    return this.workflowRepo.delete(id)
+  }
+
+  // Delete Workflow Node
+  @Mutation(() => WorkflowNode)
+  @UseMiddleware(ErrorInterceptor)
+  async deleteWorkflowNode(@Arg('id') id: number): Promise<DeleteResult> {
+    return this.workflowNodeRepo.delete(id)
   }
 
   /**
-   * Testing Subscriptions
+   * Subscriptions
    */
 
   @Mutation(() => Boolean)
