@@ -89,6 +89,7 @@ export default class WorkflowResolver {
     return newNode
   }
 
+  // update position
   @Mutation(() => WorkflowNode)
   @UseMiddleware(ErrorInterceptor)
   async updateWorkflowNodePosition(
@@ -149,7 +150,6 @@ export default class WorkflowResolver {
     let index = undefined
     const node = workflowNodes.find((node, i) => {
       index = i
-      // TODO: bug fix needed. one of these is a number for some reason
       return String(node.id) === String(id)
     })
 
@@ -157,6 +157,9 @@ export default class WorkflowResolver {
       throw new Error('invalid Node ID')
     }
 
+    if (workflowNodeParentInput.parentId) {
+      console.log(id, workflowNodeParentInput.parentId)
+    }
     node.parentId = workflowNodeParentInput.parentId
 
     workflow.workflowNodes = [
@@ -176,17 +179,25 @@ export default class WorkflowResolver {
     return this.workflowRepo.delete(id)
   }
 
-  // Delete Workflow Node
+  // Delete Node
   @Mutation(() => WorkflowNode)
   @UseMiddleware(ErrorInterceptor)
   async deleteWorkflowNode(@Arg('id') id: number): Promise<WorkflowNode> {
-    const node = await this.workflowNodeRepo.findOne(id)
+    const deleteNode = await this.workflowNodeRepo.findOne(id)
 
-    if (!node) {
+    if (!deleteNode) {
       throw new Error('invalid Node ID')
     }
+
+    const nodes = await this.workflowNodeRepo.find({
+      where: [{ parentId: deleteNode.id }],
+    })
+
+    nodes.forEach((n) => (n.parentId = undefined))
+    await this.workflowNodeRepo.save(nodes)
+
     await this.workflowNodeRepo.delete(id)
-    return node
+    return deleteNode
   }
 
   /**

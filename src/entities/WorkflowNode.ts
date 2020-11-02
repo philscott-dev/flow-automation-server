@@ -18,7 +18,7 @@ export default class WorkflowNode extends BaseEntity {
   @PrimaryGeneratedColumn()
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   @Column({ nullable: true })
   parentId?: string
 

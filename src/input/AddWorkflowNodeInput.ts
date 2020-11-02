@@ -6,6 +6,9 @@ export default class AddWorkflowNodeInput implements Partial<WorkflowNode> {
   @Field(() => ID)
   workflowId!: string
 
+  @Field(() => ID, { nullable: true })
+  parentId?: string
+
   @Field()
   name!: string
 
