@@ -37,6 +37,10 @@ async function main() {
         console.log('ws: disconnected')
       },
     },
+    cors: {
+      origin: '*',
+      credentials: true,
+    },
   })
   const { url, subscriptionsUrl } = await server.listen(4000)
   console.log(

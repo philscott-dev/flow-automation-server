@@ -5,10 +5,10 @@ import { WorkflowNode } from '../entities'
 export default class WorkflowNodePositionInput
   implements Partial<WorkflowNode> {
   @Field(() => ID)
-  workflowId!: number
+  workflowId!: string
 
   @Field(() => ID)
-  id!: number
+  id!: string
 
   @Field()
   x!: number

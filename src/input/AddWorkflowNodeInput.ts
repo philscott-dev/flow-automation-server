@@ -4,10 +4,7 @@ import { WorkflowNode } from '../entities'
 @InputType({ description: 'Create Workflow Node' })
 export default class AddWorkflowNodeInput implements Partial<WorkflowNode> {
   @Field(() => ID)
-  workflowId!: number
-
-  @Field()
-  nodeId!: string
+  workflowId!: string
 
   @Field()
   name!: string

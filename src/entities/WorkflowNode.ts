@@ -16,15 +16,11 @@ import Workflow from './Workflow'
 export default class WorkflowNode extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  readonly id!: number
+  readonly id!: string
 
   @Field({ nullable: true })
   @Column({ nullable: true })
   parentId?: string
-
-  @Field()
-  @Column()
-  nodeId!: string
 
   @Field()
   @Column()
@@ -77,5 +73,5 @@ export default class WorkflowNode extends BaseEntity {
   @ManyToOne(() => Workflow)
   workflow!: Workflow
   @RelationId((workflowNode: WorkflowNode) => workflowNode.workflow)
-  workflowId!: number
+  workflowId!: string
 }

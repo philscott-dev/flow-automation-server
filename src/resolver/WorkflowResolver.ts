@@ -14,6 +14,7 @@ import {
   UseMiddleware,
 } from 'type-graphql'
 import WorkflowNodePositionInput from '../input/WorkflowNodePositionInput'
+import WorkflowNodeParentInput from '../input/WorkflowNodeParentInput'
 
 @Resolver(Workflow)
 export default class WorkflowResolver {
@@ -111,14 +112,52 @@ export default class WorkflowResolver {
       return String(node.id) === String(id)
     })
 
-    console.log(index, node)
-
     if (!node || index == undefined) {
       throw new Error('invalid Node ID')
     }
 
     node.x = x
     node.y = y
+
+    workflow.workflowNodes = [
+      ...workflowNodes.slice(0, index),
+      node,
+      ...workflowNodes.slice(index + 1),
+    ]
+
+    await this.workflowRepo.save(workflow)
+    return node
+  }
+
+  // parentId connector
+  @Mutation(() => WorkflowNode)
+  @UseMiddleware(ErrorInterceptor)
+  async updateWorkflowNodeParent(
+    @Arg('input') workflowNodeParentInput: WorkflowNodeParentInput,
+  ): Promise<WorkflowNode> {
+    const { workflowId, id } = workflowNodeParentInput
+
+    const workflow = await this.workflowRepo.findOne(workflowId, {
+      relations: ['workflowNodes'],
+    })
+
+    if (!workflow) {
+      throw new Error('invalid workflow ID')
+    }
+
+    const { workflowNodes } = workflow
+    let index = undefined
+    const node = workflowNodes.find((node, i) => {
+      index = i
+      // TODO: bug fix needed. one of these is a number for some reason
+      return String(node.id) === String(id)
+    })
+
+    if (!node || index == undefined) {
+      throw new Error('invalid Node ID')
+    }
+
+    node.parentId = workflowNodeParentInput.parentId
 
     workflow.workflowNodes = [
       ...workflowNodes.slice(0, index),

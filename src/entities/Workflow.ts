@@ -15,7 +15,7 @@ import WorkflowNode from './WorkflowNode'
 export default class WorkFlow extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  readonly id!: number
+  readonly id!: string
 
   @Field({ description: 'The title of the workflow.' })
   @Column({ nullable: false })
