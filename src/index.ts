@@ -1,5 +1,3 @@
-// src/index.ts
-
 import 'reflect-metadata'
 import * as TypeORM from 'typeorm'
 import { Container } from 'typedi'
@@ -8,6 +6,7 @@ import { buildSchema } from 'type-graphql'
 import { RedisPubSub } from 'graphql-redis-subscriptions'
 import { redisOptions } from './config/redis.config'
 import { WorkflowResolver } from './resolver'
+import { AnyValue, AnyValueScalar } from './scalars/AnyScalar'
 import typeOrmOptions from './config/db.config'
 import Redis from 'ioredis'
 
@@ -20,6 +19,7 @@ async function main() {
     resolvers: [WorkflowResolver],
     globalMiddlewares: [],
     container: Container,
+    scalarsMap: [{ type: AnyValue, scalar: AnyValueScalar }],
     pubSub: new RedisPubSub({
       publisher: new Redis(redisOptions),
       subscriber: new Redis(redisOptions),

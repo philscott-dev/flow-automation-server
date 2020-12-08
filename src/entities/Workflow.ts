@@ -12,7 +12,7 @@ import WorkflowNode from './WorkflowNode'
 
 @Entity('workflow')
 @ObjectType()
-export default class WorkFlow extends BaseEntity {
+export default class Workflow extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   readonly id!: string
