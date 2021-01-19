@@ -76,6 +76,7 @@ export default class WorkflowResolver {
     const newNode = this.workflowNodeRepo.create({
       workflow,
       workflowId,
+      parentIds: [],
       ...node,
     })
 
@@ -159,8 +160,8 @@ export default class WorkflowResolver {
 
     if (workflowNodeParentInput.parentId) {
       console.log(id, workflowNodeParentInput.parentId)
+      node.parentIds.push(workflowNodeParentInput.parentId)
     }
-    node.parentId = workflowNodeParentInput.parentId
 
     workflow.workflowNodes = [
       ...workflowNodes.slice(0, index),
@@ -193,7 +194,7 @@ export default class WorkflowResolver {
       where: [{ parentId: deleteNode.id }],
     })
 
-    nodes.forEach((n) => (n.parentId = undefined))
+    nodes.forEach((n) => (n.parentIds = []))
     await this.workflowNodeRepo.save(nodes)
 
     await this.workflowNodeRepo.delete(id)

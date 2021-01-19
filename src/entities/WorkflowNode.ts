@@ -18,9 +18,9 @@ export default class WorkflowNode extends BaseEntity {
   @PrimaryGeneratedColumn()
   readonly id!: string
 
-  @Field(() => ID, { nullable: true })
-  @Column({ nullable: true })
-  parentId?: string
+  @Field(() => [ID])
+  @Column({ type: 'simple-array' })
+  parentIds!: string[]
 
   @Field()
   @Column()
@@ -75,3 +75,22 @@ export default class WorkflowNode extends BaseEntity {
   @RelationId((workflowNode: WorkflowNode) => workflowNode.workflow)
   workflowId!: string
 }
+
+// const param = {
+//   name: 'ipAddress',
+//   type: 'string',
+//   fieldType: null,
+//   options: [
+//     {
+//       id: 1,
+//       value: '1.1.1.1',
+//       default: 'always' | 'initial',
+//     },
+//   ],
+// }
+
+/**
+ * since field type is null, i can assume it's just an <input />,
+ * I'd always check options no matter what, and now you could keep your
+ * Model pretty small for what a Param is
+ */
